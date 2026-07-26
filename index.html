@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সম্মিলিত শব্দভাণ্ডার কুইজ</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .main-wrapper {
+            width: 100%;
+            max-width: 600px;
+        }
+        .quiz-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            padding: 30px 25px;
+            width: 100%;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        h1 {
+            font-size: 26px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .subhead {
+            color: #555;
+            font-size: 15px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 12px;
+        }
+        .description {
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            font-size: 15px;
+        }
+        .category-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 18px 0 22px;
+        }
+        .cat-btn {
+            background: #f0f3f8;
+            border: 2px solid #dce1e8;
+            padding: 14px 6px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #1e2b37;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .cat-btn:hover {
+            background: #dfe6ef;
+            border-color: #b0c0d0;
+            transform: scale(0.98);
+        }
+        .cat-btn.active {
+            background: #3742fa;
+            border-color: #3742fa;
+            color: white;
+        }
+        .start-btn {
+            background: #3742fa;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-size: 18px;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 10px rgba(55, 66, 250, 0.3);
+        }
+        .start-btn:hover {
+            opacity: 0.88;
+            transform: scale(0.98);
+        }
+        .progress {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d4059;
+            background: #ecf0f3;
+            padding: 8px 12px;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 18px;
+        }
+        .question-box {
+            background: #fafbfc;
+            border: 2px dashed #c5d0db;
+            padding: 22px 15px;
+            border-radius: 14px;
+            margin-bottom: 22px;
+        }
+        #word-display {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e2b3a;
+            margin: 8px 0;
+            word-break: break-word;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .option-btn {
+            background: #f1f4f9;
+            border: 2px solid #dde3ec;
+            padding: 14px 6px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.15s;
+            color: #1f2b38;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .option-btn:hover:not(:disabled) {
+            background: #e2e8f2;
+            border-color: #b6c4d6;
+        }
+        .option-btn.correct {
+            background: #2ed573;
+            border-color: #20b85b;
+            color: white;
+        }
+        .option-btn.wrong {
+            background: #ff4757;
+            border-color: #e03141;
+            color: white;
+        }
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        #quiz-box, #result-container {
+            display: none;
+        }
+        .score-text {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 18px 0 12px;
+            color: #1e2b3a;
+        }
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 22px;
+        }
+        .action-btn {
+            border: none;
+            padding: 14px 16px;
+            font-size: 16px;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .action-btn:hover {
+            opacity: 0.88;
+            transform: scale(0.97);
+        }
+        .retry-btn { background: #f39c12; }
+        .increase-btn { background: #27ae60; }
+        .back-home-btn {
+            background: #7f8c8d;
+            margin-top: 6px;
+        }
+        .hidden { display: none; }
+        .badge {
+            background: #ecf0f1;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        @media (max-width: 480px) {
+            .options { grid-template-columns: 1fr; }
+            .category-grid { grid-template-columns: 1fr 1fr; }
+            .quiz-container { padding: 20px 15px; }
+        }
+    </style>
+</head>
+<body>
+<div class="main-wrapper">
+
+    <!-- START SCREEN (HOME) -->
+    <div class="quiz-container" id="start-container">
+        <h1>📚 শব্দভাণ্ডার কুইজ</h1>
+        <div class="subhead">৪টি আলাদা ক্যাটাগরিতে পরীক্ষা দিন</div>
+        <p class="description">
+            প্রথমে একটি ক্যাটাগরি বেছে নিন। প্রতিটি ক্যাটাগরিতে আলাদা শব্দতালিকা।
+            <br><span class="badge">প্রতিটি রাউন্ডে ২০টি শব্দ</span>
+        </p>
+        <div class="category-grid">
+            <button class="cat-btn" data-cat="0">🔤 বিদেশি (প্রথম)</button>
+            <button class="cat-btn" data-cat="1">🌍 বিদেশি+মিশ্র (দ্বিতীয়)</button>
+            <button class="cat-btn" data-cat="2">🧩 মিশ্র+বিস্তৃত (তৃতীয়)</button>
+            <button class="cat-btn" data-cat="3">📖 সম্পূর্ণ (চতুর্থ)</button>
+        </div>
+        <button class="start-btn" id="main-start-btn">▶ শুরু করুন (২০টি)</button>
+        <div style="margin-top: 14px; font-size: 14px; color: #555;">
+            <span id="selected-cat-label">কোন ক্যাটাগরি নির্বাচন করা হয়নি</span>
+        </div>
+    </div>
+
+    <!-- QUIZ BOX -->
+    <div class="quiz-container" id="quiz-box">
+        <h1 id="quiz-title">শব্দ কুইজ</h1>
+        <div class="progress" id="progress-text">প্রশ্ন: ১ / ২০</div>
+        <div class="question-box">
+            <p style="margin: 0 0 6px; color: #5a6a7a; font-weight: 500;">নিচের শব্দটি কোন ভাষার?</p>
+            <div id="word-display">শব্দ</div>
+        </div>
+        <div class="options" id="options-container"></div>
+        <div style="margin-top: 18px; text-align: right; font-size: 14px; color: #6a7a8a;">
+            <span id="category-indicator">ক্যাটাগরি: —</span>
+        </div>
+    </div>
+
+    <!-- RESULT -->
+    <div class="quiz-container" id="result-container">
+        <h1>🏁 রাউন্ড শেষ!</h1>
+        <div class="score-text" id="final-score">স্কোর: 0 / 0</div>
+        <div style="margin: 6px 0 10px; font-size: 16px; color: #2c3e50;" id="result-category-name">ক্যাটাগরি: —</div>
+        <div class="btn-group">
+            <button class="action-btn retry-btn" id="retry-btn">🔄 আবার চেষ্টা (একই ক্যাটাগরি)</button>
+            <button class="action-btn increase-btn" id="increase-btn">➕ আরও ১০টি যোগ করুন</button>
+            <button class="action-btn back-home-btn" id="home-btn">🏠 হোমে ফিরে যান</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    (function() {
+        // ---------- ৪টি ক্যাটাগরির ডেটাবেস (প্রত্যেকটি আলাদা) ----------
+        // ক্যাটাগরি ০: index.htm থেকে  (বিদেশি শব্দ - প্রথম)
+        const category0 = [
+            {word: "আল্লাহ", lang: "আরবি"}, {word: "ইমান", lang: "আরবি"}, {word: "ইসলাম", lang: "আরবি"}, {word: "অজু", lang: "আরবি"}, {word: "কুরআন", lang: "আরবি"}, {word: "কুরবানি", lang: "আরবি"}, {word: "কিয়ামত", lang: "আরবি"}, {word: "জান্নাত", lang: "আরবি"}, {word: "জাহান্নাম", lang: "আরবি"}, {word: "গোসল", lang: "আরবি"}, {word: "তসবি", lang: "আরবি"}, {word: "জাকাত", lang: "আরবি"}, {word: "হারাম", lang: "আরবি"}, {word: "হালাল", lang: "আরবি"}, {word: "তওবা", lang: "আরবি"}, {word: "ঈদ", lang: "আরবি"}, {word: "কোরবানি", lang: "আরবি"}, {word: "আদমি", lang: "আরবি"}, {word: "হাশর", lang: "আরবি"}, {word: "শহিদ", lang: "আরবি"},
+            {word: "ইনসান", lang: "আরবি"}, {word: "আদালত", lang: "আরবি"}, {word: "উকিল", lang: "আরবি"}, {word: "এজলাস", lang: "আরবি"}, {word: "এলেম", lang: "আরবি"}, {word: "ওজর", lang: "আরবি"}, {word: "মুনসেফ", lang: "আরবি"}, {word: "মোক্তার", lang: "আরবি"}, {word: "কিতাব", lang: "আরবি"}, {word: "কানুন", lang: "আরবি"}, {word: "নগদ", lang: "আরবি"}, {word: "বাকি", lang: "আরবি"}, {word: "কেচ্ছা", lang: "আরবি"}, {word: "খারিজ", lang: "আরবি"}, {word: "কলম", lang: "আরবি"}, {word: "মহকুমা", lang: "আরবি"}, {word: "রায়", lang: "আরবি"}, {word: "তারিখ", lang: "আরবি"}, {word: "ছবি", lang: "আরবি"}, {word: "হুকুম", lang: "আরবি"}, {word: "বন্দুক", lang: "আরবি"}, {word: "খালসা", lang: "আরবি"}, {word: "সালাত", lang: "আরবি"}, {word: "সিয়াম", lang: "আরবি"}, {word: "হজ", lang: "আরবি"},
+            {word: "জাদুকর", lang: "ফারসি"}, {word: "কারিগর", lang: "ফারসি"}, {word: "সওদাগর", lang: "ফারসি"}, {word: "জমিদার", lang: "ফারসি"}, {word: "তালুকদার", lang: "ফারসি"}, {word: "ঝাড়ুদার", lang: "ফারসি"}, {word: "বোমাবাজ", lang: "ফারসি"}, {word: "ধোঁকাবাজ", lang: "ফারসি"}, {word: "রাজবন্দি", lang: "ফারসি"}, {word: "জবানবন্দি", lang: "ফারসি"}, {word: "কারাবন্দি", lang: "ফারসি"}, {word: "জুতসই", lang: "ফারসি"}, {word: "চলনসই", lang: "ফারসি"}, {word: "টেকসই", lang: "ফারসি"}, {word: "কারখানা", lang: "ফারসি"}, {word: "চশমা", lang: "ফারসি"}, {word: "বাজার", lang: "ফারসি"}, {word: "দোকান", lang: "ফারসি"}, {word: "পাইকারি", lang: "ফারসি"}, {word: "খুচরা", lang: "ফারসি"}, {word: "আমদানি", lang: "ফারসি"}, {word: "রপ্তানি", lang: "ফারসি"}, {word: "জানোয়ার", lang: "ফারসি"}, {word: "বদমাশ", lang: "ফারসি"}, {word: "রংবাজ", lang: "ফারসি"}, {word: "চাঁদাবাজ", lang: "ফারসি"}, {word: "রংমহল", lang: "ফারসি"}, {word: "রংতামাশা", lang: "ফারসি"}, {word: "হাঙ্গামা", lang: "ফারসি"}, {word: "দারোগা", lang: "ফারসি"}, {word: "আইন", lang: "ফারসি"}, {word: "দফতর", lang: "ফারসি"}, {word: "দরবার", lang: "ফারসি"}, {word: "দস্তখত", lang: "ফারসি"}, {word: "একতারা", lang: "ফারসি"}, {word: "মামলা", lang: "ফারসি"}, {word: "গ্রেফতার", lang: "ফারসি"}, {word: "নালিশ", lang: "ফারসি"}, {word: "বান্দা", lang: "ফারসি"}, {word: "বন্দি", lang: "ফারসি"}, {word: "বন্দেগি", lang: "ফারসি"}, {word: "বাদশাহ", lang: "ফারসি"}, {word: "রসদ", lang: "ফারসি"}, {word: "রসিদ", lang: "ফারসি"}, {word: "বকশিশ", lang: "ফারসি"}, {word: "নমুনা", lang: "ফারসি"}, {word: "দেওয়াল", lang: "ফারসি"}, {word: "লুঙ্গি", lang: "ফারসি"}, {word: "গঞ্জ", lang: "ফারসি"}, {word: "জঙ্গল", lang: "ফারসি"}, {word: "শরবত", lang: "ফারসি"}, {word: "পোলাও", lang: "ফারসি"}, {word: "চাকর", lang: "ফারসি"}, {word: "চাকুরি", lang: "ফারসি"}, {word: "হুশিয়ার", lang: "ফারসি"}, {word: "বারুদ", lang: "ফারসি"}, {word: "বাদাম", lang: "ফারসি"}, {word: "পেঁয়াজ", lang: "ফারসি"}, {word: "ফালুদা", lang: "ফারসি"}, {word: "বাগান", lang: "ফারসি"}, {word: "বাগিচা", lang: "ফারসি"}, {word: "খোদা", lang: "ফারসি"}, {word: "বেহেশত", lang: "ফারসি"}, {word: "দোজখ", lang: "ফারসি"}, {word: "নামাজ", lang: "ফারসি"}, {word: "রোজা", lang: "ফারসি"},
+            {word: "কুপন", lang: "ফরাসি"}, {word: "কুশন", lang: "ফরাসি"}, {word: "কোলাজ", lang: "ফরাসি"}, {word: "ক্যাফে", lang: "ফরাসি"}, {word: "ডিপো", lang: "ফরাসি"}, {word: "রেস্তোরাঁ", lang: "ফরাসি"}, {word: "রেনেসাঁস", lang: "ফরাসি"}, {word: "চকলেট", lang: "ফরাসি"}, {word: "ক্যালেন্ডার", lang: "ফরাসি"}
+        ];
+
+        // ক্যাটাগরি ১: index2.html থেকে (বিদেশি + মিশ্র, দ্বিতীয়)
+        const category1 = [
+            {word: "আল্লাহ", lang: "আরবি"}, {word: "ইমান", lang: "আরবি"}, {word: "ইসলাম", lang: "আরবি"}, {word: "অজু", lang: "আরবি"}, {word: "কুরআন", lang: "আরবি"}, {word: "কুরবানি", lang: "আরবি"}, {word: "কিয়ামত", lang: "আরবি"}, {word: "জান্নাত", lang: "আরবি"}, {word: "জাহান্নাম", lang: "আরবি"}, {word: "গোসল", lang: "আরবি"}, {word: "তসবি", lang: "আরবি"}, {word: "জাকাত", lang: "আরবি"}, {word: "হারাম", lang: "আরবি"}, {word: "হালাল", lang: "আরবি"}, {word: "তওবা", lang: "আরবি"}, {word: "ঈদ", lang: "আরবি"}, {word: "কোরবানি", lang: "আরবি"}, {word: "আদমি", lang: "আরবি"}, {word: "হাশর", lang: "আরবি"}, {word: "শহিদ", lang: "আরবি"},
+            {word: "ইনসান", lang: "আরবি"}, {word: "আদালত", lang: "আরবি"}, {word: "উকিল", lang: "আরবি"}, {word: "এজলাস", lang: "আরবি"}, {word: "এলেম", lang: "আরবি"}, {word: "ওজর", lang: "আরবি"}, {word: "মুনসেফ", lang: "আরবি"}, {word: "মোক্তার", lang: "আরবি"}, {word: "কিতাব", lang: "আরবি"}, {word: "কানুন", lang: "আরবি"}, {word: "নগদ", lang: "আরবি"}, {word: "বাকি", lang: "আরবি"}, {word: "কেচ্ছা", lang: "আরবি"}, {word: "খারিজ", lang: "আরবি"}, {word: "কলম", lang: "আরবি"}, {word: "মহকুমা", lang: "আরবি"}, {word: "রায়", lang: "আরবি"}, {word: "তারিখ", lang: "আরবি"}, {word: "ছবি", lang: "আরবি"}, {word: "হুকুম", lang: "আরবি"}, {word: "বন্দুক", lang: "আরবি"}, {word: "খালসা", lang: "আরবি"}, {word: "সালাত", lang: "আরবি"}, {word: "সিয়াম", lang: "আরবি"}, {word: "হজ", lang: "আরবি"}, {word: "আব্বা", lang: "আরবি"}, {word: "আব্বু", lang: "আরবি"},
+            {word: "জাদুকর", lang: "ফারসি"}, {word: "কারিগর", lang: "ফারসি"}, {word: "সওদাগর", lang: "ফারসি"}, {word: "জমিদার", lang: "ফারসি"}, {word: "তালুকদার", lang: "ফারসি"}, {word: "ঝাড়ুদার", lang: "ফারসি"}, {word: "বোমাবাজ", lang: "ফারসি"}, {word: "ধোঁকাবাজ", lang: "ফারসি"}, {word: "রাজবন্দি", lang: "ফারসি"}, {word: "জবানবন্দি", lang: "ফারসি"}, {word: "কারাবন্দি", lang: "ফারসি"}, {word: "জুতসই", lang: "ফারসি"}, {word: "চলনসই", lang: "ফারসি"}, {word: "টেকসই", lang: "ফারসি"}, {word: "কারখানা", lang: "ফারসি"}, {word: "চশমা", lang: "ফারসি"}, {word: "বাজার", lang: "ফারসি"}, {word: "দোকান", lang: "ফারসি"}, {word: "পাইকারি", lang: "ফারসি"}, {word: "খুচরা", lang: "ফারসি"}, {word: "আমদানি", lang: "ফারসি"}, {word: "রপ্তানি", lang: "ফারসি"}, {word: "জানোয়ার", lang: "ফারসি"}, {word: "বদমাশ", lang: "ফারসি"}, {word: "রংবাজ", lang: "ফারসি"}, {word: "চাঁদাবাজ", lang: "ফারসি"}, {word: "রংমহল", lang: "ফারসি"}, {word: "রংতামাশা", lang: "ফারসি"}, {word: "হাঙ্গামা", lang: "ফারসি"}, {word: "দারোগা", lang: "ফারসি"}, {word: "আইন", lang: "ফারসি"}, {word: "দফতর", lang: "ফারসি"}, {word: "দরবার", lang: "ফারসি"}, {word: "দস্তখত", lang: "ফারসি"}, {word: "একতারা", lang: "ফারসি"}, {word: "মামলা", lang: "ফারসি"}, {word: "গ্রেফতার", lang: "ফারসি"}, {word: "নালিশ", lang: "ফারসি"}, {word: "বান্দা", lang: "ফারসি"}, {word: "বন্দি", lang: "ফারসি"}, {word: "বন্দেগি", lang: "ফারসি"}, {word: "বাদশাহ", lang: "ফারসি"}, {word: "রসদ", lang: "ফারসি"}, {word: "রসিদ", lang: "ফারসি"}, {word: "বকশিশ", lang: "ফারসি"}, {word: "নমুনা", lang: "ফারসি"}, {word: "দেওয়াল", lang: "ফারসি"}, {word: "লুঙ্গি", lang: "ফারসি"}, {word: "গঞ্জ", lang: "ফারসি"}, {word: "জঙ্গল", lang: "ফারসি"}, {word: "শরবত", lang: "ফারসি"}, {word: "পোলাও", lang: "ফারসি"}, {word: "চাকর", lang: "ফারসি"}, {word: "চাকুরি", lang: "ফারসি"}, {word: "হুশিয়ার", lang: "ফারসি"}, {word: "বারুদ", lang: "ফারসি"}, {word: "বাদাম", lang: "ফারসি"}, {word: "পেঁয়াজ", lang: "ফারসি"}, {word: "ফালুদা", lang: "ফারসি"}, {word: "বাগান", lang: "ফারসি"}, {word: "বাগিচা", lang: "ফারসি"}, {word: "খোদা", lang: "ফারসি"}, {word: "বেহেশত", lang: "ফারসি"}, {word: "দোজখ", lang: "ফারসি"}, {word: "নামাজ", lang: "ফারসি"}, {word: "রোজা", lang: "ফারসি"}, {word: "আসমানি", lang: "ফারসি"}, {word: "বাদামি", lang: "ফারসি"}, {word: "লাল", lang: "ফারসি"}, {word: "সবুজ", lang: "ফারসি"}, {word: "গোলাপি", lang: "ফারসি"}, {word: "সফেদ", lang: "ফারসি"}, {word: "সাদা", lang: "ফারসি"},
+            {word: "কুপন", lang: "ফরাসি"}, {word: "কুশন", lang: "ফরাসি"}, {word: "কোলাজ", lang: "ফরাসি"}, {word: "ক্যাফে", lang: "ফরাসি"}, {word: "ডিপো", lang: "ফরাসি"}, {word: "রেস্তোরাঁ", lang: "ফরাসি"}, {word: "রেনেসাঁস", lang: "ফরাসি"}, {word: "চকলেট", lang: "ফরাসি"}, {word: "ক্যালেন্ডার", lang: "ফরাসি"},
+            {word: "ফুঙ্গি", lang: "বর্মিজ"}, {word: "নাপ্পি", lang: "বর্মিজ"},
+            {word: "ক্যারাটে", lang: "জাপানি"}, {word: "জুডো", lang: "জাপানি"}, {word: "রিকশা", lang: "জাপানি"}, {word: "সুনামি", lang: "জাপানি"}, {word: "প্যাগোডা", lang: "জাপানি"}, {word: "হাসনুহানা", lang: "জাপানি"},
+            {word: "বাবু", lang: "হিন্দি"}, {word: "নানা", lang: "হিন্দি"}, {word: "নানি", lang: "হিন্দি"}, {word: "পানি", lang: "হিন্দি"}, {word: "বাসন", lang: "হিন্দি"}, {word: "ঠান্ডা", lang: "হিন্দি"}, {word: "কাহিনি", lang: "হিন্দি"}, {word: "কাচারি", lang: "হিন্দি"}, {word: "হালুয়া", lang: "হিন্দি"}, {word: "জিলাপি", lang: "হিন্দি"},
+            {word: "বাইবেল", lang: "ইংরেজি"}, {word: "কফিন", lang: "ইংরেজি"}, {word: "অফিস", lang: "ইংরেজি"}, {word: "কেক", lang: "ইংরেজি"}, {word: "কোট", lang: "ইংরেজি"}, {word: "ক্লাস", lang: "ইংরেজি"}, {word: "গ্লাস", lang: "ইংরেজি"}, {word: "চপ", lang: "ইংরেজি"}, {word: "চেয়ার", lang: "ইংরেজি"}, {word: "জজ", lang: "ইংরেজি"}, {word: "জ্যাম", lang: "ইংরেজি"}, {word: "টিন", lang: "ইংরেজি"}, {word: "টেবিল", lang: "ইংরেজি"}, {word: "কামান", lang: "ইংরেজি"}, {word: "টেলিভিশন", lang: "ইংরেজি"}, {word: "ডায়েরি", lang: "ইংরেজি"}, {word: "নোট", lang: "ইংরেজি"}, {word: "পেন", lang: "ইংরেজি"}, {word: "পেন্সিল", lang: "ইংরেজি"}, {word: "প্যান্ট", lang: "ইংরেজি"}, {word: "প্লেন", lang: "ইংরেজি"}, {word: "ফিল্ম", lang: "ইংরেজি"}, {word: "ফ্যাশন", lang: "ইংরেজি"}, {word: "ফুটবল", lang: "ইংরেজি"}, {word: "ফটোকপি", lang: "ইংরেজি"}, {word: "মিটিং", lang: "ইংরেজি"}, {word: "মেম্বার", lang: "ইংরেজি"}, {word: "রোড", lang: "ইংরেজি"}, {word: "লাইব্রেরি", lang: "ইংরেজি"}, {word: "লাগেজ", lang: "ইংরেজি"}, {word: "শেয়ার", lang: "ইংরেজি"}, {word: "স্কুল", lang: "ইংরেজি"}, {word: "হ্যান্ডবল", lang: "ইংরেজি"}, {word: "হাসপাতাল", lang: "ইংরেজি"}, {word: "রোস্ট", lang: "ইংরেজি"}, {word: "ফটোজস্ট্যাট", lang: "ইংরেজি"}, {word: "বার্গার", lang: "ইংরেজি"}, {word: "বল", lang: "ইংরেজি"}, {word: "ব্যাগ", lang: "ইংরেজি"}, {word: "বাক্স", lang: "ইংরেজি"}, {word: "বাল্ব", lang: "ইংরেজি"}, {word: "মাস্টার", lang: "ইংরেজি"},
+            {word: "বাবা", lang: "তুর্কি"}, {word: "বাহাদুর", lang: "তুর্কি"}, {word: "খোকা", lang: "তুর্কি"}, {word: "কুলি", lang: "তুর্কি"}, {word: "কুর্নিশ", lang: "তুর্কি"}, {word: "বাবুর্চি", lang: "তুর্কি"}, {word: "কোর্মা", lang: "তুর্কি"}, {word: "চাকু", lang: "তুর্কি"}, {word: "তোপ", lang: "তুর্কি"}, {word: "কাঁচি", lang: "তুর্কি"}, {word: "লাশ", lang: "তুর্কি"}, {word: "মোগল", lang: "তুর্কি"}, {word: "মুচলেকা", lang: "তুর্কি"}, {word: "কফি", lang: "তুর্কি"},
+            {word: "পিতা", lang: "তৎসম"}, {word: "মাতা", lang: "তৎসম"}, {word: "জনক", lang: "তৎসম"}, {word: "জননী", lang: "তৎসম"}, {word: "নীল", lang: "তৎসম"}, {word: "ধূসর", lang: "তৎসম"}, {word: "হলুদ", lang: "তৎসম"},
+            {word: "বাপ", lang: "বাংলা"}, {word: "মা", lang: "বাংলা"}, {word: "বেগুনি", lang: "বাংলা"}, {word: "খয়েরি", lang: "বাংলা"}, {word: "ছাই", lang: "বাংলা"}, {word: "রূপালি", lang: "বাংলা"}, {word: "সোনালি", lang: "বাংলা"}, {word: "কালো", lang: "বাংলা"},
+            {word: "ম্যাজেন্টা", lang: "ইতালি"},
+            {word: "আচার", lang: "পর্তুগিজ"}, {word: "আনারস", lang: "পর্তুগিজ"}, {word: "পেঁপে", lang: "পর্তুগিজ"}, {word: "পাউরুটি", lang: "পর্তুগিজ"}, {word: "পিরিচ", lang: "পর্তুগিজ"}, {word: "গামলা", lang: "পর্তুগিজ"}, {word: "সাবু", lang: "পর্তুগিজ"}, {word: "গির্জা", lang: "পর্তুগিজ"}, {word: "ইংরেজ", lang: "পর্তুগিজ"}, {word: "ইংরেজি", lang: "পর্তুগিজ"}, {word: "বালতি", lang: "পর্তুগিজ"}, {word: "তোয়ালে", lang: "পর্তুগিজ"}, {word: "কামরা", lang: "পর্তুগিজ"}, {word: "জানালা", lang: "পর্তুগিজ"}, {word: "কেদারা", lang: "পর্তুগিজ"}, {word: "গুদাম", lang: "পর্তুগিজ"}, {word: "আলমারি", lang: "পর্তুগিজ"}, {word: "চাবি", lang: "পর্তুগিজ"}, {word: "আলপিন", lang: "পর্তুগিজ"}, {word: "আলকাতরা", lang: "পর্তুগিজ"}, {word: "বোতাম", lang: "পর্তুগিজ"}, {word: "বোমা", lang: "পর্তুগিজ"}, {word: "বোতল", lang: "পর্তুগিজ"}, {word: "ইস্ত্রি", lang: "পর্তুগিজ"}, {word: "মিস্ত্রি", lang: "পর্তুগিজ"}, {word: "পাদরি", lang: "পর্তুগিজ"},
+            {word: "ইস্কাপন", lang: "ওলন্দাজ"}, {word: "রুইতন", lang: "ওলন্দাজ"}, {word: "হরতন", lang: "ওলন্দাজ"}, {word: "টেক্কা", lang: "ওলন্দাজ"},
+            {word: "খাদি", lang: "গুজরাটি"}, {word: "খদ্দর", lang: "গুজরাটি"}, {word: "হরতাল", lang: "গুজরাটি"},
+            {word: "গুরুমুখি", lang: "পাঞ্জাবি"}, {word: "গুরুদুয়ারা", lang: "পাঞ্জাবি"},
+            {word: "চা", lang: "চীনা"}, {word: "লিচু", lang: "চীনা"}, {word: "সাম্পান", lang: "চীনা"}
+        ];
+
+        // ক্যাটাগরি ২: index3.html থেকে (মিশ্র + বিস্তৃত)
+        const category2 = [
+            {word: "আল্লাহ", lang: "আরবি"}, {word: "ইমান", lang: "আরবি"}, {word: "ইসলাম", lang: "আরবি"}, {word: "অজু", lang: "আরবি"}, {word: "কুরআন", lang: "আরবি"}, {word: "কুরবানি", lang: "আরবি"}, {word: "কিয়ামত", lang: "আরবি"}, {word: "জান্নাত", lang: "আরবি"}, {word: "জাহান্নাম", lang: "আরবি"}, {word: "গোসল", lang: "আরবি"}, {word: "তসবি", lang: "আরবি"}, {word: "জাকাত", lang: "আরবি"}, {word: "হারাম", lang: "আরবি"}, {word: "হালাল", lang: "আরবি"}, {word: "তওবা", lang: "আরবি"}, {word: "ঈদ", lang: "আরবি"}, {word: "কোরবানি", lang: "আরবি"}, {word: "হাশর", lang: "আরবি"}, {word: "শহিদ", lang: "আরবি"}, {word: "ইনসান", lang: "আরবি"}, {word: "আদালত", lang: "আরবি"}, {word: "উকিল", lang: "আরবি"}, {word: "এজলাস", lang: "আরবি"}, {word: "এলেম", lang: "আরবি"}, {word: "ওজর", lang: "আরবি"}, {word: "মুনসেফ", lang: "আরবি"}, {word: "মোক্তার", lang: "আরবি"}, {word: "কিতাব", lang: "আরবি"}, {word: "নগদ", lang: "আরবি"}, {word: "বাকি", lang: "আরবি"}, {word: "কেচ্ছা", lang: "আরবি"}, {word: "খারিজ", lang: "আরবি"}, {word: "কলম", lang: "আরবি"}, {word: "মহকুমা", lang: "আরবি"}, {word: "রায়", lang: "আরবি"}, {word: "ছবি", lang: "আরবি"}, {word: "খালসা", lang: "আরবি"}, {word: "সালাত", lang: "আরবি"}, {word: "সিয়াম", lang: "আরবি"}, {word: "হজ", lang: "আরবি"}, {word: "আব্বা", lang: "আরবি"}, {word: "আব্বু", lang: "আরবি"},
+            {word: "জাদুকর", lang: "ফারসি"}, {word: "কারিগর", lang: "ফারসি"}, {word: "সওদাগর", lang: "ফারসি"}, {word: "জমিদার", lang: "ফারসি"}, {word: "তালুকদার", lang: "ফারসি"}, {word: "ঝাড়ুদার", lang: "ফারসি"}, {word: "বোমাবাজ", lang: "ফারসি"}, {word: "ধোঁকাবাজ", lang: "ফারসি"}, {word: "রাজবন্দি", lang: "ফারসি"}, {word: "জবানবন্দি", lang: "ফারসি"}, {word: "কারাবন্দি", lang: "ফারসি"}, {word: "জুতসই", lang: "ফারসি"}, {word: "চলনসই", lang: "ফারসি"}, {word: "টেকসই", lang: "ফারসি"}, {word: "কারখানা", lang: "ফারসি"}, {word: "চশমা", lang: "ফারসি"}, {word: "বাজার", lang: "ফারসি"}, {word: "দোকান", lang: "ফারসি"}, {word: "পাইকারি", lang: "ফারসি"}, {word: "খুচরা", lang: "ফারসি"}, {word: "আমদানি", lang: "ফারসি"}, {word: "রপ্তানি", lang: "ফারসি"}, {word: "জানোয়ার", lang: "ফারসি"}, {word: "বদমাশ", lang: "ফারসি"}, {word: "রংবাজ", lang: "ফারসি"}, {word: "চাঁদাবাজ", lang: "ফারসি"}, {word: "রংমহল", lang: "ফারসি"}, {word: "রংতামাশা", lang: "ফারসি"}, {word: "হাঙ্গামা", lang: "ফারসি"}, {word: "দফতর", lang: "ফারসি"}, {word: "দরবার", lang: "ফারসি"}, {word: "দস্তখত", lang: "ফারসি"}, {word: "একতারা", lang: "ফারসি"}, {word: "মামলা", lang: "ফারসি"}, {word: "গ্রেফতার", lang: "ফারসি"}, {word: "নালিশ", lang: "ফারসি"}, {word: "বান্দা", lang: "ফারসি"}, {word: "বন্দি", lang: "ফারসি"}, {word: "বন্দেগি", lang: "ফারসি"}, {word: "বাদশাহ", lang: "ফারসি"}, {word: "রসদ", lang: "ফারসি"}, {word: "রসিদ", lang: "ফারসি"}, {word: "বকশিশ", lang: "ফারসি"}, {word: "নমুনা", lang: "ফারসি"}, {word: "দেওয়াল", lang: "ফারসি"}, {word: "পোলাও", lang: "ফারসি"}, {word: "চাকর", lang: "ফারসি"}, {word: "চাকুরি", lang: "ফারসি"}, {word: "হুশিয়ার", lang: "ফারসি"}, {word: "বারুদ", lang: "ফারসি"}, {word: "বাদাম", lang: "ফারসি"}, {word: "পেঁয়াজ", lang: "ফারসি"}, {word: "ফালুদা", lang: "ফারসি"}, {word: "বাগান", lang: "ফারসি"}, {word: "বাগিচা", lang: "ফারসি"}, {word: "খোদা", lang: "ফারসি"}, {word: "বেহেশত", lang: "ফারসি"}, {word: "দোজখ", lang: "ফারসি"}, {word: "নামাজ", lang: "ফারসি"}, {word: "রোজা", lang: "ফারসি"}, {word: "আসমানি", lang: "ফারসি"}, {word: "বাদামি", lang: "ফারসি"}, {word: "লাল", lang: "ফারসি"}, {word: "সবুজ", lang: "ফারসি"}, {word: "গোলাপি", lang: "ফারসি"}, {word: "সফেদ", lang: "ফারসি"}, {word: "সাদা", lang: "ফারসি"},
+            {word: "কুপন", lang: "ফরাসি"}, {word: "কুশন", lang: "ফরাসি"}, {word: "কোলাজ", lang: "ফরাসি"}, {word: "ক্যাফে", lang: "ফরাসি"}, {word: "ডিপো", lang: "ফরাসি"}, {word: "রেস্তোরাঁ", lang: "ফরাসি"}, {word: "রেনেসাঁস", lang: "ফরাসি"}, {word: "ক্যালেন্ডার", lang: "ফরাসি"},
+            {word: "ফুঙ্গি", lang: "বর্মিজ"}, {word: "নাপ্পি", lang: "বর্মিজ"},
+            {word: "ক্যারাটে", lang: "জাপানি"}, {word: "জুডো", lang: "জাপানি"}, {word: "রিকশা", lang: "জাপানি"}, {word: "সুনামি", lang: "জাপানি"}, {word: "প্যাগোডা", lang: "জাপানি"}, {word: "হাসনুহানা", lang: "জাপানি"},
+            {word: "বাবু", lang: "হিন্দি"}, {word: "নানা", lang: "হিন্দি"}, {word: "নানি", lang: "হিন্দি"}, {word: "পানি", lang: "হিন্দি"}, {word: "বাসন", lang: "হিন্দি"}, {word: "ঠান্ডা", lang: "হিন্দি"}, {word: "কাহিনি", lang: "হিন্দি"}, {word: "কাচারি", lang: "হিন্দি"}, {word: "হালুয়া", lang: "হিন্দি"}, {word: "জিলাপি", lang: "হিন্দি"},
+            {word: "বাইবেল", lang: "ইংরেজি"}, {word: "কফিন", lang: "ইংরেজি"}, {word: "অফিস", lang: "ইংরেজি"}, {word: "কেক", lang: "ইংরেজি"}, {word: "কোট", lang: "ইংরেজি"}, {word: "ক্লাস", lang: "ইংরেজি"}, {word: "গ্লাস", lang: "ইংরেজি"}, {word: "চপ", lang: "ইংরেজি"}, {word: "চেয়ার", lang: "ইংরেজি"}, {word: "জজ", lang: "ইংরেজি"}, {word: "জ্যাম", lang: "ইংরেজি"}, {word: "টিন", lang: "ইংরেজি"}, {word: "টেবিল", lang: "ইংরেজি"}, {word: "কামান", lang: "ইংরেজি"}, {word: "টেলিভিশন", lang: "ইংরেজি"}, {word: "ডায়েরি", lang: "ইংরেজি"}, {word: "নোট", lang: "ইংরেজি"}, {word: "পেন", lang: "ইংরেজি"}, {word: "পেন্সিল", lang: "ইংরেজি"}, {word: "প্যান্ট", lang: "ইংরেজি"}, {word: "প্লেন", lang: "ইংরেজি"}, {word: "ফিল্ম", lang: "ইংরেজি"}, {word: "ফ্যাশন", lang: "ইংরেজি"}, {word: "ফুটবল", lang: "ইংরেজি"}, {word: "ফটোকপি", lang: "ইংরেজি"}, {word: "মিটিং", lang: "ইংরেজি"}, {word: "মেম্বার", lang: "ইংরেজি"}, {word: "রোড", lang: "ইংরেজি"}, {word: "লাইব্রেরি", lang: "ইংরেজি"}, {word: "লাগেজ", lang: "ইংরেজি"}, {word: "শেয়ার", lang: "ইংরেজি"}, {word: "স্কুল", lang: "ইংরেজি"}, {word: "হ্যান্ডবল", lang: "ইংরেজি"}, {word: "হাসপাতাল", lang: "ইংরেজি"}, {word: "রোস্ট", lang: "ইংরেজি"}, {word: "ফটোজস্ট্যাট", lang: "ইংরেজি"}, {word: "বার্গার", lang: "ইংরেজি"}, {word: "বল", lang: "ইংরেজি"}, {word: "ব্যাগ", lang: "ইংরেজি"}, {word: "বাক্স", lang: "ইংরেজি"}, {word: "বাল্ব", lang: "ইংরেজি"}, {word: "মাস্টার", lang: "ইংরেজি"},
+            {word: "বাবা", lang: "তুর্কি"}, {word: "বাহাদুর", lang: "তুর্কি"}, {word: "খোকা", lang: "তুর্কি"}, {word: "কুলি", lang: "তুর্কি"}, {word: "কুর্নিশ", lang: "তুর্কি"}, {word: "বাবুর্চি", lang: "তুর্কি"}, {word: "কোর্মা", lang: "তুর্কি"}, {word: "চাকু", lang: "তুর্কি"}, {word: "তোপ", lang: "তুর্কি"}, {word: "কাঁচি", lang: "তুর্কি"}, {word: "লাশ", lang: "তুর্কি"}, {word: "মোগল", lang: "তুর্কি"}, {word: "মুচলেকা", lang: "তুর্কি"}, {word: "কফি", lang: "তুর্কি"},
+            {word: "পিতা", lang: "তৎসম"}, {word: "মাতা", lang: "তৎসম"}, {word: "জনক", lang: "তৎসম"}, {word: "জননী", lang: "তৎসম"}, {word: "নীল", lang: "তৎসম"}, {word: "ধূসর", lang: "তৎসম"}, {word: "হলুদ", lang: "তৎসম"},
+            {word: "বাপ", lang: "বাংলা"}, {word: "মা", lang: "বাংলা"}, {word: "বেগুনি", lang: "বাংলা"}, {word: "খয়েরি", lang: "বাংলা"}, {word: "ছাই", lang: "বাংলা"}, {word: "রূপালি", lang: "বাংলা"}, {word: "সোনালি", lang: "বাংলা"}, {word: "কালো", lang: "বাংলা"},
+            {word: "ম্যাজেন্টা", lang: "ইতালি"},
+            {word: "আচার", lang: "পর্তুগিজ"}, {word: "আনারস", lang: "পর্তুগিজ"}, {word: "পেঁপে", lang: "পর্তুগিজ"}, {word: "পাউরুটি", lang: "পর্তুগিজ"}, {word: "পিরিচ", lang: "পর্তুগিজ"}, {word: "গামলা", lang: "পর্তুগিজ"}, {word: "সাবু", lang: "পর্তুগিজ"}, {word: "গির্জা", lang: "পর্তুগিজ"}, {word: "ইংরেজ", lang: "পর্তুগিজ"}, {word: "ইংরেজি", lang: "পর্তুগিজ"}, {word: "বালতি", lang: "পর্তুগিজ"}, {word: "তোয়ালে", lang: "পর্তুগিজ"}, {word: "কামরা", lang: "পর্তুগিজ"}, {word: "জানালা", lang: "পর্তুগিজ"}, {word: "কেদারা", lang: "পর্তুগিজ"}, {word: "গুদাম", lang: "পর্তুগিজ"}, {word: "আলমারি", lang: "পর্তুগিজ"}, {word: "চাবি", lang: "পর্তুগিজ"}, {word: "আলপিন", lang: "পর্তুগিজ"}, {word: "আলকাতরা", lang: "পর্তুগিজ"}, {word: "বোতাম", lang: "পর্তুগিজ"}, {word: "বোমা", lang: "পর্তুগিজ"}, {word: "বোতল", lang: "পর্তুগিজ"}, {word: "ইস্ত্রি", lang: "পর্তুগিজ"}, {word: "মিস্ত্রি", lang: "পর্তুগিজ"}, {word: "পাদরি", lang: "পর্তুগিজ"},
+            {word: "ইস্কাপন", lang: "ওলন্দাজ"}, {word: "রুইতন", lang: "ওলন্দাজ"}, {word: "হরতন", lang: "ওলন্দাজ"}, {word: "টেক্কা", lang: "ওলন্দাজ"},
+            {word: "খাদি", lang: "গুজরাটি"}, {word: "খদ্দর", lang: "গুজরাটি"}, {word: "হরতাল", lang: "গুজরাটি"},
+            {word: "গুরুমুখি", lang: "পাঞ্জাবি"}, {word: "গুরুদুয়ারা", lang: "পাঞ্জাবি"},
+            {word: "চা", lang: "চীনা"}, {word: "লিচু", lang: "চীনা"}, {word: "সাম্পান", lang: "চীনা"},
+            {word: "আইন", lang: "ফারসি"}, {word: "সুড়ঙ্গ", lang: "তৎসম"}, {word: "চিনি", lang: "তদ্ভব"}, {word: "মার্কা", lang: "ইংরেজি"}, {word: "টেক্কা", lang: "দেশি"}, {word: "বেগম", lang: "তুর্কি"}, {word: "চরকা", lang: "তদ্ভব"}, {word: "তারিখ", lang: "আরবি"}, {word: "বর্গি", lang: "ফারসি"}, {word: "বন্দুক", lang: "আরবি"}, {word: "দারোগা", lang: "ফারসি"}, {word: "চোঙা", lang: "হিন্দি"}, {word: "শরবত", lang: "আরবি"}, {word: "কুলা", lang: "তদ্ভব"}, {word: "লুঙ্গি", lang: "ফারসি"}, {word: "তুরুপ", lang: "পর্তুগিজ"}, {word: "চৌ-হদ্দি", lang: "বাংলা + ফারসি"}, {word: "কার্তুজ", lang: "পর্তুগিজ"}, {word: "চকোলেট", lang: "ফরাসি"}, {word: "পেয়ারা", lang: "পর্তুগিজ"}, {word: "আদমি", lang: "আরবি"}, {word: "চাহিদা", lang: "তদ্ভব"}, {word: "কানুন", lang: "আরবি"}, {word: "ঢেঁকি", lang: "হিন্দি"}, {word: "হুকুম", lang: "আরবি"}, {word: "গঞ্জ", lang: "ফারসি"}, {word: "আতা", lang: "তদ্ভব"}, {word: "জঙ্গল", lang: "তৎসম"},
+            {word: "রাজা-বাদশা", lang: "তৎসম + ফারসি"}, {word: "হেড-পণ্ডিত", lang: "ইংরেজি + তৎসম"}, {word: "রাজা-উজির", lang: "তৎসম + আরবি"}, {word: "পকেটমার", lang: "ইংরেজি + বাংলা"}, {word: "দাওয়াখানা", lang: "আরবি + ফারসি"}, {word: "অংশীদার", lang: "তৎসম + ফারসি"}, {word: "হাবিলদার", lang: "আরবি + ফারসি"}, {word: "শ্রমিকমালিক", lang: "তৎসম + আরবি"}, {word: "জাদুঘর", lang: "ফারসি + বাংলা"}, {word: "হেড-মৌলবি", lang: "ইংরেজি + আরবি"}, {word: "খ্রিষ্টাব্দ", lang: "ইংরেজি + তৎসম"}, {word: "আইনজীবী", lang: "ফারসি + তৎসম"}, {word: "দেনাদার", lang: "আরবি + ফারসি"}, {word: "হাফহাতা", lang: "ইংরেজি + তদ্ভব"}, {word: "ঝাড়ুদার", lang: "হিন্দি + ফারসি"}, {word: "নিটল", lang: "বাংলা + তৎসম"}, {word: "খোশমেজাজ", lang: "ফারসি + আরবি"}, {word: "চাবিকাঠি", lang: "পর্তুগিজ + বাংলা"}, {word: "ডাক্তার-খানা", lang: "ইংরেজি + ফারসি"}, {word: "কালি-কলম", lang: "বাংলা + আরবি"}, {word: "চৌকিদার", lang: "বাংলা + ফারসি"}, {word: "মাস্টারমশাই", lang: "ইংরেজি + তদ্ভব"}, {word: "গুরুগিরি", lang: "তৎসম + ফারসি"}, {word: "পাওনাদার", lang: "বাংলা + ফারসি"}, {word: "হানাদার", lang: "বাংলা + ফারসি"}, {word: "ফৌজদারি", lang: "আরবি + ফারসি"}, {word: "হাট-বাজার", lang: "বাংলা + ফারসি"}
+        ];
+
+        // ক্যাটাগরি ৩: index4.html থেকে (সম্পূর্ণ ডেটাবেস)
+        const category3 = [
+            {word: "আল্লাহ", lang: "আরবি"}, {word: "ইমান", lang: "আরবি"}, {word: "ইসলাম", lang: "আরবি"}, {word: "অজু", lang: "আরবি"}, {word: "কুরআন", lang: "আরবি"}, {word: "কুরবানি", lang: "আরবি"}, {word: "কিয়ামত", lang: "আরবি"}, {word: "জান্নাত", lang: "আরবি"}, {word: "জাহান্নাম", lang: "আরবি"}, {word: "গোসল", lang: "আরবি"}, {word: "তসবি", lang: "আরবি"}, {word: "জাকাত", lang: "আরবি"}, {word: "হারাম", lang: "আরবি"}, {word: "হালাল", lang: "আরবি"}, {word: "তওবা", lang: "আরবি"}, {word: "ঈদ", lang: "আরবি"}, {word: "কোরবানি", lang: "আরবি"}, {word: "হাশর", lang: "আরবি"}, {word: "শহিদ", lang: "আরবি"}, {word: "ইনসান", lang: "আরবি"}, {word: "আদালত", lang: "আরবি"}, {word: "উকিল", lang: "আরবি"}, {word: "এজলাস", lang: "আরবি"}, {word: "এলেম", lang: "আরবি"}, {word: "ওজর", lang: "আরবি"}, {word: "মুনসেফ", lang: "আরবি"}, {word: "মোক্তার", lang: "আরবি"}, {word: "কিতাব", lang: "আরবি"}, {word: "নগদ", lang: "আরবি"}, {word: "বাকি", lang: "আরবি"}, {word: "কেচ্ছা", lang: "আরবি"}, {word: "খারিজ", lang: "আরবি"}, {word: "কলম", lang: "আরবি"}, {word: "মহকুমা", lang: "আরবি"}, {word: "রায়", lang: "আরবি"}, {word: "ছবি", lang: "আরবি"}, {word: "খালসা", lang: "আরবি"}, {word: "সালাত", lang: "আরবি"}, {word: "সিয়াম", lang: "আরবি"}, {word: "হজ", lang: "আরবি"}, {word: "আব্বা", lang: "আরবি"}, {word: "আব্বু", lang: "আরবি"},
+            {word: "জাদুকর", lang: "ফারসি"}, {word: "কারিগর", lang: "ফারসি"}, {word: "সওদাগর", lang: "ফারসি"}, {word: "জমিদার", lang: "ফারসি"}, {word: "তালুকদার", lang: "ফারসি"}, {word: "ঝাড়ুদার", lang: "ফারসি"}, {word: "বোমাবাজ", lang: "ফারসি"}, {word: "ধোঁকাবাজ", lang: "ফারসি"}, {word: "রাজবন্দি", lang: "ফারসি"}, {word: "জবানবন্দি", lang: "ফারসি"}, {word: "কারাবন্দি", lang: "ফারসি"}, {word: "জুতসই", lang: "ফারসি"}, {word: "চলনসই", lang: "ফারসি"}, {word: "টেকসই", lang: "ফারসি"}, {word: "কারখানা", lang: "ফারসি"}, {word: "চশমা", lang: "ফারসি"}, {word: "বাজার", lang: "ফারসি"}, {word: "দোকান", lang: "ফারসি"}, {word: "পাইকারি", lang: "ফারসি"}, {word: "খুচরা", lang: "ফারসি"}, {word: "আমদানি", lang: "ফারসি"}, {word: "রপ্তানি", lang: "ফারসি"}, {word: "জানোয়ার", lang: "ফারসি"}, {word: "বদমাশ", lang: "ফারসি"}, {word: "রংবাজ", lang: "ফারসি"}, {word: "চাঁদাবাজ", lang: "ফারসি"}, {word: "রংমহল", lang: "ফারসি"}, {word: "রংতামাশা", lang: "ফারসি"}, {word: "হাঙ্গামা", lang: "ফারসি"}, {word: "দফতর", lang: "ফারসি"}, {word: "দরবার", lang: "ফারসি"}, {word: "দস্তখত", lang: "ফারসি"}, {word: "একতারা", lang: "ফারসি"}, {word: "মামলা", lang: "ফারসি"}, {word: "গ্রেফতার", lang: "ফারসি"}, {word: "নালিশ", lang: "ফারসি"}, {word: "বান্দা", lang: "ফারসি"}, {word: "বন্দি", lang: "ফারসি"}, {word: "বন্দেগি", lang: "ফারসি"}, {word: "বাদশাহ", lang: "ফারসি"}, {word: "রসদ", lang: "ফারসি"}, {word: "রসিদ", lang: "ফারসি"}, {word: "বকশিশ", lang: "ফারসি"}, {word: "নমুনা", lang: "ফারসি"}, {word: "দেওয়াল", lang: "ফারসি"}, {word: "পোলাও", lang: "ফারসি"}, {word: "চাকর", lang: "ফারসি"}, {word: "চাকুরি", lang: "ফারসি"}, {word: "হুশিয়ার", lang: "ফারসি"}, {word: "বারুদ", lang: "ফারসি"}, {word: "বাদাম", lang: "ফারসি"}, {word: "পেঁয়াজ", lang: "ফারসি"}, {word: "ফালুদা", lang: "ফারসি"}, {word: "বাগান", lang: "ফারসি"}, {word: "বাগিচা", lang: "ফারসি"}, {word: "খোদা", lang: "ফারসি"}, {word: "বেহেশত", lang: "ফারসি"}, {word: "দোজখ", lang: "ফারসি"}, {word: "নামাজ", lang: "ফারসি"}, {word: "রোজা", lang: "ফারসি"}, {word: "আসমানি", lang: "ফারসি"}, {word: "বাদামি", lang: "ফারসি"}, {word: "লাল", lang: "ফারসি"}, {word: "সবুজ", lang: "ফারসি"}, {word: "গোলাপি", lang: "ফারসি"}, {word: "সফেদ", lang: "ফারসি"}, {word: "সাদা", lang: "ফারসি"},
+            {word: "কুপন", lang: "ফরাসি"}, {word: "কুশন", lang: "ফরাসি"}, {word: "কোলাজ", lang: "ফরাসি"}, {word: "ক্যাফে", lang: "ফরাসি"}, {word: "ডিপো", lang: "ফরাসি"}, {word: "রেস্তোরাঁ", lang: "ফরাসি"}, {word: "রেনেসাঁস", lang: "ফরাসি"}, {word: "ক্যালেন্ডার", lang: "ফরাসি"},
+            {word: "ফুঙ্গি", lang: "বর্মিজ"}, {word: "নাপ্পি", lang: "বর্মিজ"},
+            {word: "ক্যারাটে", lang: "জাপানি"}, {word: "জুডো", lang: "জাপানি"}, {word: "রিকশা", lang: "জাপানি"}, {word: "সুনামি", lang: "জাপানি"}, {word: "প্যাগোডা", lang: "জাপানি"}, {word: "হাসনুহানা", lang: "জাপানি"},
+            {word: "বাবু", lang: "হিন্দি"}, {word: "নানা", lang: "হিন্দি"}, {word: "নানি", lang: "হিন্দি"}, {word: "পানি", lang: "হিন্দি"}, {word: "বাসন", lang: "হিন্দি"}, {word: "ঠান্ডা", lang: "হিন্দি"}, {word: "কাহিনি", lang: "হিন্দি"}, {word: "কাচারি", lang: "হিন্দি"}, {word: "হালুয়া", lang: "হিন্দি"}, {word: "জিলাপি", lang: "হিন্দি"},
+            {word: "বাইবেল", lang: "ইংরেজি"}, {word: "কফিন", lang: "ইংরেজি"}, {word: "অফিস", lang: "ইংরেজি"}, {word: "কেক", lang: "ইংরেজি"}, {word: "কোট", lang: "ইংরেজি"}, {word: "ক্লাস", lang: "ইংরেজি"}, {word: "গ্লাস", lang: "ইংরেজি"}, {word: "চপ", lang: "ইংরেজি"}, {word: "চেয়ার", lang: "ইংরেজি"}, {word: "জজ", lang: "ইংরেজি"}, {word: "জ্যাম", lang: "ইংরেজি"}, {word: "টিন", lang: "ইংরেজি"}, {word: "টেবিল", lang: "ইংরেজি"}, {word: "কামান", lang: "ইংরেজি"}, {word: "টেলিভিশন", lang: "ইংরেজি"}, {word: "ডায়েরি", lang: "ইংরেজি"}, {word: "নোট", lang: "ইংরেজি"}, {word: "পেন", lang: "ইংরেজি"}, {word: "পেন্সিল", lang: "ইংরেজি"}, {word: "প্যান্ট", lang: "ইংরেজি"}, {word: "প্লেন", lang: "ইংরেজি"}, {word: "ফিল্ম", lang: "ইংরেজি"}, {word: "ফ্যাশন", lang: "ইংরেজি"}, {word: "ফুটবল", lang: "ইংরেজি"}, {word: "ফটোকপি", lang: "ইংরেজি"}, {word: "মিটিং", lang: "ইংরেজি"}, {word: "মেম্বার", lang: "ইংরেজি"}, {word: "রোড", lang: "ইংরেজি"}, {word: "লাইব্রেরি", lang: "ইংরেজি"}, {word: "লাগেজ", lang: "ইংরেজি"}, {word: "শেয়ার", lang: "ইংরেজি"}, {word: "স্কুল", lang: "ইংরেজি"}, {word: "হ্যান্ডবল", lang: "ইংরেজি"}, {word: "হাসপাতাল", lang: "ইংরেজি"}, {word: "রোস্ট", lang: "ইংরেজি"}, {word: "ফটোজস্ট্যাট", lang: "ইংরেজি"}, {word: "বার্গার", lang: "ইংরেজি"}, {word: "বল", lang: "ইংরেজি"}, {word: "ব্যাগ", lang: "ইংরেজি"}, {word: "বাক্স", lang: "ইংরেজি"}, {word: "বাল্ব", lang: "ইংরেজি"}, {word: "মাস্টার", lang: "ইংরেজি"},
+            {word: "বাবা", lang: "তুর্কি"}, {word: "বাহাদুর", lang: "তুর্কি"}, {word: "খোকা", lang: "তুর্কি"}, {word: "কুলি", lang: "তুর্কি"}, {word: "কুর্নিশ", lang: "তুর্কি"}, {word: "বাবুর্চি", lang: "তুর্কি"}, {word: "কোর্মা", lang: "তুর্কি"}, {word: "চাকু", lang: "তুর্কি"}, {word: "তোপ", lang: "তুর্কি"}, {word: "কাঁচি", lang: "তুর্কি"}, {word: "লাশ", lang: "তুর্কি"}, {word: "মোগল", lang: "তুর্কি"}, {word: "মুচলেকা", lang: "তুর্কি"}, {word: "কফি", lang: "তুর্কি"},
+            {word: "পিতা", lang: "তৎসম"}, {word: "মাতা", lang: "তৎসম"}, {word: "জনক", lang: "তৎসম"}, {word: "জননী", lang: "তৎসম"}, {word: "নীল", lang: "তৎসম"}, {word: "ধূসর", lang: "তৎসম"}, {word: "হলুদ", lang: "তৎসম"},
+            {word: "বাপ", lang: "বাংলা"}, {word: "মা", lang: "বাংলা"}, {word: "বেগুনি", lang: "বাংলা"}, {word: "খয়েরি", lang: "বাংলা"}, {word: "ছাই", lang: "বাংলা"}, {word: "রূপালি", lang: "বাংলা"}, {word: "সোনালি", lang: "বাংলা"}, {word: "কালো", lang: "বাংলা"},
+            {word: "ম্যাজেন্টা", lang: "ইতালি"},
+            {word: "আচার", lang: "পর্তুগিজ"}, {word: "আনারস", lang: "পর্তুগিজ"}, {word: "পেঁপে", lang: "পর্তুগিজ"}, {word: "পাউরুটি", lang: "পর্তুগিজ"}, {word: "পিরিচ", lang: "পর্তুগিজ"}, {word: "গামলা", lang: "পর্তুগিজ"}, {word: "সাবু", lang: "পর্তুগিজ"}, {word: "গির্জা", lang: "পর্তুগিজ"}, {word: "ইংরেজ", lang: "পর্তুগিজ"}, {word: "ইংরেজি", lang: "পর্তুগিজ"}, {word: "বালতি", lang: "পর্তুগিজ"}, {word: "তোয়ালে", lang: "পর্তুগিজ"}, {word: "কামরা", lang: "পর্তুগিজ"}, {word: "জানালা", lang: "পর্তুগিজ"}, {word: "কেদারা", lang: "পর্তুগিজ"}, {word: "গুদাম", lang: "পর্তুগিজ"}, {word: "আলমারি", lang: "পর্তুগিজ"}, {word: "চাবি", lang: "পর্তুগিজ"}, {word: "আলপিন", lang: "পর্তুগিজ"}, {word: "আলকাতরা", lang: "পর্তুগিজ"}, {word: "বোতাম", lang: "পর্তুগিজ"}, {word: "বোমা", lang: "পর্তুগিজ"}, {word: "বোতল", lang: "পর্তুগিজ"}, {word: "ইস্ত্রি", lang: "পর্তুগিজ"}, {word: "মিস্ত্রি", lang: "পর্তুগিজ"}, {word: "পাদরি", lang: "পর্তুগিজ"},
+            {word: "ইস্কাপন", lang: "ওলন্দাজ"}, {word: "রুইতন", lang: "ওলন্দাজ"}, {word: "হরতন", lang: "ওলন্দাজ"}, {word: "টেক্কা", lang: "ওলন্দাজ"},
+            {word: "খাদি", lang: "গুজরাটি"}, {word: "খদ্দর", lang: "গুজরাটি"}, {word: "হরতাল", lang: "গুজরাটি"},
+            {word: "গুরুমুখি", lang: "পাঞ্জাবি"}, {word: "গুরুদুয়ারা", lang: "পাঞ্জাবি"},
+            {word: "চা", lang: "চীনা"}, {word: "লিচু", lang: "চীনা"}, {word: "সাম্পান", lang: "চীনা"},
+            {word: "আইন", lang: "ফারসি"}, {word: "সুড়ঙ্গ", lang: "তৎসম"}, {word: "চিনি", lang: "তদ্ভব"}, {word: "মার্কা", lang: "ইংরেজি"}, {word: "টেক্কা", lang: "দেশি"}, {word: "বেগম", lang: "তুর্কি"}, {word: "চরকা", lang: "তদ্ভব"}, {word: "তারিখ", lang: "আরবি"}, {word: "বর্গি", lang: "ফারসি"}, {word: "বন্দুক", lang: "আরবি"}, {word: "দারোগা", lang: "ফারসি"}, {word: "চোঙা", lang: "হিন্দি"}, {word: "শরবত", lang: "আরবি"}, {word: "কুলা", lang: "তদ্ভব"}, {word: "লুঙ্গি", lang: "ফারসি"}, {word: "তুরুপ", lang: "পর্তুগিজ"}, {word: "চৌ-হদ্দি", lang: "বাংলা + ফারসি"}, {word: "কার্তুজ", lang: "পর্তুগিজ"}, {word: "চকোলেট", lang: "ফরাসি"}, {word: "পেয়ারা", lang: "পর্তুগিজ"}, {word: "আদমি", lang: "আরবি"}, {word: "চাহিদা", lang: "তদ্ভব"}, {word: "কানুন", lang: "আরবি"}, {word: "ঢেঁকি", lang: "হিন্দি"}, {word: "হুকুম", lang: "আরবি"}, {word: "গঞ্জ", lang: "ফারসি"}, {word: "আতা", lang: "তদ্ভব"}, {word: "জঙ্গল", lang: "তৎসম"},
+            {word: "রাজা-বাদশা", lang: "তৎসম + ফারসি"}, {word: "হেড-পণ্ডিত", lang: "ইংরেজি + তৎসম"}, {word: "রাজা-উজির", lang: "তৎসম + আরবি"}, {word: "পকেটমার", lang: "ইংরেজি + বাংলা"}, {word: "দাওয়াখানা", lang: "আরবি + ফারসি"}, {word: "অংশীদার", lang: "তৎসম + ফারসি"}, {word: "হাবিলদার", lang: "আরবি + ফারসি"}, {word: "শ্রমিকমালিক", lang: "তৎসম + আরবি"}, {word: "জাদুঘর", lang: "ফারসি + বাংলা"}, {word: "হেড-মৌলবি", lang: "ইংরেজি + আরবি"}, {word: "খ্রিষ্টাব্দ", lang: "ইংরেজি + তৎসম"}, {word: "আইনজীবী", lang: "ফারসি + তৎসম"}, {word: "দেনাদার", lang: "আরবি + ফারসি"}, {word: "হাফহাতা", lang: "ইংরেজি + তদ্ভব"}, {word: "ঝাড়ুদার", lang: "হিন্দি + ফারসি"}, {word: "নিটল", lang: "বাংলা + তৎসম"}, {word: "খোশমেজাজ", lang: "ফারসি + আরবি"}, {word: "চাবিকাঠি", lang: "পর্তুগিজ + বাংলা"}, {word: "ডাক্তার-খানা", lang: "ইংরেজি + ফারসি"}, {word: "কালি-কলম", lang: "বাংলা + আরবি"}, {word: "চৌকিদার", lang: "বাংলা + ফারসি"}, {word: "মাস্টারমশাই", lang: "ইংরেজি + তদ্ভব"}, {word: "গুরুগিরি", lang: "তৎসম + ফারসি"}, {word: "পাওনাদার", lang: "বাংলা + ফারসি"}, {word: "হানাদার", lang: "বাংলা + ফারসি"}, {word: "ফৌজদারি", lang: "আরবি + ফারসি"}, {word: "হাট-বাজার", lang: "বাংলা + ফারসি"},
+            {word: "লবণ", lang: "তৎসম"}, {word: "ব্যাকরণ", lang: "তৎসম"}, {word: "ঋণ", lang: "তৎসম"}, {word: "নদী", lang: "তৎসম"}, {word: "মেধাবী", lang: "তৎসম"}, {word: "সূত্রধর", lang: "তৎসম"}, {word: "প্রভাব", lang: "তৎসম"}, {word: "প্রতাপ", lang: "তৎসম"}, {word: "প্রসিদ্ধ", lang: "তৎসম"}, {word: "কর্তব্য", lang: "তৎসম"}, {word: "করণীয়", lang: "তৎসম"}, {word: "চন্দ্র", lang: "তৎসম"}, {word: "সূর্য", lang: "তৎসম"}, {word: "গ্রহ", lang: "তৎসম"}, {word: "নক্ষত্র", lang: "তৎসম"}, {word: "শশী", lang: "তৎসম"}, {word: "জ্যোৎস্না", lang: "তৎসম"}, {word: "ভূ-মণ্ডল", lang: "তৎসম"}, {word: "প্রথম", lang: "তৎসম"}, {word: "দ্বিতীয়", lang: "তৎসম"}, {word: "তৃতীয়", lang: "তৎসম"}, {word: "বর্ণ", lang: "তৎসম"}, {word: "সুবর্ণ", lang: "তৎসম"}, {word: "স্বর্ণ", lang: "তৎসম"}, {word: "কর্মকার", lang: "তৎসম"}, {word: "সর্ব", lang: "তৎসম"}, {word: "সর্প", lang: "তৎসম"}, {word: "গৃহ", lang: "তৎসম"}, {word: "বৃষ্টি", lang: "তৎসম"}, {word: "কৃপণ", lang: "তৎসম"}, {word: "তৃণ", lang: "তৎসম"}, {word: "কর্ণ", lang: "তৎসম"}, {word: "হস্ত", lang: "তৎসম"}, {word: "উৎপাটন", lang: "তৎসম"}, {word: "উৎকণ্ঠা", lang: "তৎসম"}, {word: "উৎকৃষ্ট", lang: "তৎসম"}, {word: "উৎপাত", lang: "তৎসম"}, {word: "কিঞ্চিৎ", lang: "তৎসম"}, {word: "ফুৎকার", lang: "তৎসম"}, {word: "চিৎকার", lang: "তৎসম"}, {word: "তৎপর", lang: "তৎসম"}, {word: "উত্তর", lang: "তৎসম"}, {word: "দক্ষিণ", lang: "তৎসম"}, {word: "পূর্ব", lang: "তৎসম"}, {word: "পশ্চিম", lang: "তৎসম"}, {word: "ঈশান", lang: "তৎসম"}, {word: "বায়ু", lang: "তৎসম"}, {word: "অগ্নি", lang: "তৎসম"}, {word: "নৈর্ঋত", lang: "তৎসম"}, {word: "ঊর্ধ্ব", lang: "তৎসম"}, {word: "অধঃ", lang: "তৎসম"}, {word: "ব্রাহ্মণ", lang: "তৎসম"}, {word: "দেবতা", lang: "তৎসম"}, {word: "দেবী", lang: "তৎসম"}, {word: "মন্দির", lang: "তৎসম"}, {word: "পূজা", lang: "তৎসম"}, {word: "ভবন", lang: "তৎসম"}, {word: "ধর্ম", lang: "তৎসম"}, {word: "পাত্র", lang: "তৎসম"}, {word: "মনুষ্য", lang: "তৎসম"}, {word: "চর্মকার", lang: "তৎসম"}, {word: "শ্রাদ্ধ", lang: "তৎসম"}, {word: "গৃহিণী", lang: "তৎসম"}, {word: "বৈষ্ণব", lang: "তৎসম"}, {word: "মানব", lang: "তৎসম"}, {word: "কাক", lang: "তৎসম"}, {word: "জয়", lang: "তৎসম"}, {word: "রবি", lang: "তৎসম"}, {word: "মাধব", lang: "তৎসম"}, {word: "নীলিমা", lang: "তৎসম"}, {word: "জল", lang: "তৎসম"}, {word: "বধ", lang: "তৎসম"}, {word: "ভাবুক", lang: "তৎসম"}, {word: "ভূমি", lang: "তৎসম"}, {word: "মধু", lang: "তৎসম"}, {word: "লতা", lang: "তৎসম"}, {word: "জীবন", lang: "তৎসম"}, {word: "প্রভাত", lang: "তৎসম"}, {word: "নারকেল", lang: "তৎসম"}, {word: "শিক্ষক", lang: "তৎসম"}, {word: "ছাত্র", lang: "তৎসম"},
+            {word: "জোছনা", lang: "অর্ধ-তৎসম"}, {word: "ছেরাদ্দ", lang: "অর্ধ-তৎসম"}, {word: "বদ্দি", lang: "অর্ধ-তৎসম"}, {word: "পুরুত", lang: "অর্ধ-তৎসম"}, {word: "রোদ্দুর", lang: "অর্ধ-তৎসম"}, {word: "গেরাম", lang: "অর্ধ-তৎসম"}, {word: "মিত্তির", lang: "অর্ধ-তৎসম"}, {word: "রাজপুত্তুর", lang: "অর্ধ-তৎসম"}, {word: "কুচ্ছিত", lang: "অর্ধ-তৎসম"}, {word: "পেন্নাম", lang: "অর্ধ-তৎসম"}, {word: "কেষ্ট", lang: "অর্ধ-তৎসম"}, {word: "গিন্নি", lang: "অর্ধ-তৎসম"}, {word: "বোষ্টম", lang: "অর্ধ-তৎসম"}, {word: "বিষ্টু", lang: "অর্ধ-তৎসম"}, {word: "ছিদাম", lang: "অর্ধ-তৎসম"}, {word: "বেস্পতি", lang: "অর্ধ-তৎসম"}, {word: "ছিরি", lang: "অর্ধ-তৎসম"}, {word: "ঘেন্না", lang: "অর্ধ-তৎসম"}, {word: "নেমন্তন্ন", lang: "অর্ধ-তৎসম"}, {word: "সাধি", lang: "অর্ধ-তৎসম"}, {word: "মোচ্ছব", lang: "অর্ধ-তৎসম"}, {word: "গতর", lang: "অর্ধ-তৎসম"},
+            {word: "হাত", lang: "তদ্ভব"}, {word: "বাঁশি", lang: "তদ্ভব"}, {word: "চামার", lang: "তদ্ভব"}, {word: "কামার", lang: "তদ্ভব"}, {word: "ভাত", lang: "তদ্ভব"}, {word: "কাজ", lang: "তদ্ভব"}, {word: "ভাল", lang: "তদ্ভব"}, {word: "বউ", lang: "তদ্ভব"}, {word: "মা", lang: "তদ্ভব"}, {word: "কুমার", lang: "তদ্ভব"}, {word: "হাতি", lang: "তদ্ভব"}, {word: "সাঁঝ", lang: "তদ্ভব"}, {word: "ভাই", lang: "তদ্ভব"}, {word: "আজ", lang: "তদ্ভব"}, {word: "চাকা", lang: "তদ্ভব"}, {word: "মাছ", lang: "তদ্ভব"},
+            {word: "চুলা", lang: "দেশি"}, {word: "কুড়ি", lang: "দেশি"}, {word: "পেট", lang: "দেশি"}, {word: "ডাব", lang: "দেশি"}, {word: "ডাগর", lang: "দেশি"}, {word: "টোপর", lang: "দেশি"}, {word: "কুলি", lang: "দেশি"}, {word: "ধেঁড়শিয়াল", lang: "দেশি"}, {word: "নেংটি", lang: "দেশি"}, {word: "বাবুই", lang: "দেশি"}, {word: "হাঁড়ি", lang: "দেশি"}, {word: "হুতুম", lang: "দেশি"}, {word: "উচ্ছে", lang: "দেশি"}, {word: "কদু", lang: "দেশি"}, {word: "লাউ", lang: "দেশি"}, {word: "জলপাই", lang: "দেশি"}, {word: "জারুল", lang: "দেশি"}, {word: "থানকুনি", lang: "দেশি"}, {word: "থোড়", lang: "দেশি"}, {word: "ধুন্দল", lang: "দেশি"}, {word: "বাতাসা", lang: "দেশি"}, {word: "নটে", lang: "দেশি"}, {word: "মালপো", lang: "দেশি"}, {word: "খালই", lang: "দেশি"}, {word: "চিমটা", lang: "দেশি"}, {word: "ঝাঁটা", lang: "দেশি"}, {word: "বাখারি", lang: "দেশি"}, {word: "কাতলা", lang: "দেশি"}, {word: "গজাল", lang: "দেশি"}, {word: "চেলা", lang: "দেশি"}, {word: "টেংরা", lang: "দেশি"}, {word: "পোনা", lang: "দেশি"}, {word: "বাটা", lang: "দেশি"}, {word: "কচি", lang: "দেশি"}, {word: "কানা", lang: "দেশি"}, {word: "ছোকরা", lang: "দেশি"}, {word: "ঝাউ", lang: "দেশি"}, {word: "ঝিনুক", lang: "দেশি"}, {word: "ঝোল", lang: "দেশি"}, {word: "ডিগবাজি", lang: "দেশি"}, {word: "দাবা", lang: "দেশি"}, {word: "পোকা", lang: "দেশি"}, {word: "মুড়ি", lang: "দেশি"}, {word: "মূলো", lang: "দেশি"}, {word: "মই", lang: "দেশি"}, {word: "যাতা", lang: "দেশি"}, {word: "লাঠি", lang: "দেশি"},
+            {word: "উৎকপালি", lang: "বাংলা"}, {word: "গহ্", lang: "হিন্দি"}, {word: "নাৎসি", lang: "জার্মান"}, {word: "পিৎজা", lang: "ইতালি"}
+        ];
+
+        // সব ক্যাটাগরি একত্রে
+        const categoryMap = [category0, category1, category2, category3];
+        const categoryNames = ['বিদেশি (প্রথম)', 'বিদেশি+মিশ্র (দ্বিতীয়)', 'মিশ্র+বিস্তৃত (তৃতীয়)', 'সম্পূর্ণ (চতুর্থ)'];
+
+        // UI এলিমেন্ট
+        const startContainer = document.getElementById('start-container');
+        const quizBox = document.getElementById('quiz-box');
+        const resultContainer = document.getElementById('result-container');
+        const wordDisplay = document.getElementById('word-display');
+        const optionsContainer = document.getElementById('options-container');
+        const progressText = document.getElementById('progress-text');
+        const finalScore = document.getElementById('final-score');
+        const resultCategoryName = document.getElementById('result-category-name');
+        const categoryIndicator = document.getElementById('category-indicator');
+        const quizTitle = document.getElementById('quiz-title');
+        const selectedCatLabel = document.getElementById('selected-cat-label');
+
+        const mainStartBtn = document.getElementById('main-start-btn');
+        const retryBtn = document.getElementById('retry-btn');
+        const increaseBtn = document.getElementById('increase-btn');
+        const homeBtn = document.getElementById('home-btn');
+
+        // স্টেট
+        let currentCategoryIndex = 0;          // 0-3
+        let masterDatabase = [];
+        let poolSize = 20;
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let isRetryMode = false; 
+
+        // শাফেল ফাংশন
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // ক্যাটাগরি সিলেক্ট করা
+        function selectCategory(index) {
+            currentCategoryIndex = index;
+            const btns = document.querySelectorAll('.cat-btn');
+            btns.forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            selectedCatLabel.textContent = `✅ নির্বাচিত: ${categoryNames[index]}`;
+        }
+
+        // ক্যাটাগরি বাটনে ক্লিক
+        document.querySelectorAll('.cat-btn').forEach((btn, idx) => {
+            btn.addEventListener('click', function() {
+                selectCategory(idx);
+            });
+        });
+
+        // ডিফল্ট ক্যাটাগরি ০ সিলেক্ট
+        selectCategory(0);
+
+        // কুইজ শুরু
+        function startQuiz(isIncrease) {
+            // ক্যাটাগরি থেকে ডেটা নেওয়া
+            const rawData = categoryMap[currentCategoryIndex];
+            masterDatabase = shuffleArray([...rawData]);
+
+            if (isIncrease) {
+                poolSize += 10;
+                if (poolSize > masterDatabase.length) poolSize = masterDatabase.length;
+            } else {
+                poolSize = 20;
+            }
+
+            // পুল সাইজ অনুযায়ী প্রশ্ন তৈরি
+            const currentPool = masterDatabase.slice(0, poolSize);
+            currentQuestions = shuffleArray([...currentPool]);
+            currentIndex = 0;
+            score = 0;
+
+            // UI আপডেট
+            startContainer.style.display = 'none';
+            resultContainer.style.display = 'none';
+            quizBox.style.display = 'block';
+
+            quizTitle.textContent = `📖 ${categoryNames[currentCategoryIndex]}`;
+            categoryIndicator.textContent = `ক্যাটাগরি: ${categoryNames[currentCategoryIndex]}`;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentIndex >= currentQuestions.length) {
+                showResult();
+                return;
+            }
+
+            const currentWord = currentQuestions[currentIndex];
+            wordDisplay.textContent = currentWord.word;
+            progressText.textContent = `প্রশ্ন: ${currentIndex + 1} / ${currentQuestions.length} (মোট শব্দ: ${poolSize})`;
+
+            // ভাষার তালিকা তৈরি (সঠিক + ৩টি ভুল)
+            const allLangs = [...new Set(masterDatabase.map(item => item.lang))];
+            let options = [currentWord.lang];
+            let wrongLangs = allLangs.filter(lang => lang !== currentWord.lang);
+            shuffleArray(wrongLangs);
+            options.push(wrongLangs[0], wrongLangs[1], wrongLangs[2]);
+            shuffleArray(options);
+
+            optionsContainer.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(opt, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedLang, clickedBtn) {
+            const currentWord = currentQuestions[currentIndex];
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.disabled = true);
+
+            buttons.forEach(btn => {
+                if (btn.textContent === currentWord.lang) btn.classList.add('correct');
+                if (btn.textContent === selectedLang && selectedLang !== currentWord.lang) btn.classList.add('wrong');
+            });
+
+            if (selectedLang === currentWord.lang) score++;
+
+            setTimeout(() => {
+                currentIndex++;
+                loadQuestion();
+            }, 1000);
+        }
+
+        function showResult() {
+            quizBox.style.display = 'none';
+            resultContainer.style.display = 'block';
+
+            finalScore.textContent = `স্কোর: ${score} / ${currentQuestions.length}`;
+            resultCategoryName.textContent = `ক্যাটাগরি: ${categoryNames[currentCategoryIndex]}`;
+
+            // রিট্রাই & ইনক্রিজ আপডেট
+            const nextSize = Math.min(poolSize + 10, masterDatabase.length);
+            document.getElementById('current-pool-size').textContent = poolSize;
+            document.getElementById('next-pool-size').textContent = nextSize;
+
+            if (poolSize >= masterDatabase.length) {
+                increaseBtn.style.display = 'none';
+            } else {
+                increaseBtn.style.display = 'block';
+            }
+        }
+
+        // ইভেন্ট লিসেনার
+        mainStartBtn.addEventListener('click', function() {
+            startQuiz(false);
+        });
+
+        retryBtn.addEventListener('click', function() {
+            // একই ক্যাটাগরি, একই পুল সাইজ, কিন্তু শাফেল করে নতুন করে
+            const rawData = categoryMap[currentCategoryIndex];
+            masterDatabase = shuffleArray([...rawData]);
+            const currentPool = masterDatabase.slice(0, poolSize);
+            currentQuestions = shuffleArray([...currentPool]);
+            currentIndex = 0;
+            score = 0;
+
+            startContainer.style.display = 'none';
+            resultContainer.style.display = 'none';
+            quizBox.style.display = 'block';
+            quizTitle.textContent = `📖 ${categoryNames[currentCategoryIndex]}`;
+            categoryIndicator.textContent = `ক্যাটাগরি: ${categoryNames[currentCategoryIndex]}`;
+            loadQuestion();
+        });
+
+        increaseBtn.addEventListener('click', function() {
+            startQuiz(true);
+        });
+
+        homeBtn.addEventListener('click', function() {
+            resultContainer.style.display = 'none';
+            startContainer.style.display = 'block';
+            quizBox.style.display = 'none';
+            // ক্যাটাগরি সিলেক্টেড দেখানো
+            selectCategory(currentCategoryIndex);
+        });
+
+        // পেজ লোডে স্টার্ট দেখা
+        startContainer.style.display = 'block';
+        quizBox.style.display = 'none';
+        resultContainer.style.display = 'none';
+
+    })();
+</script>
+
+</body>
+</html>
